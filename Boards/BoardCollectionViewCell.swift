@@ -11,7 +11,7 @@ import UIKit
 class BoardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var nameTextField: UITextField!
-    var board: Board?
+    var board: Board? 
 }
 
 extension BoardCollectionViewCell {
@@ -24,24 +24,46 @@ extension BoardCollectionViewCell {
     func setup() {
         layer.masksToBounds = true
         layer.cornerRadius = 10.0
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.lightGray.cgColor
         tableView.dataSource = self
         tableView.dragDelegate = self
         tableView.dropDelegate = self
         tableView.dragInteractionEnabled = true
         tableView.tableFooterView = UIView()
+        tableView.reloadData()
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.attributedTitle = NSAttributedString(string: "Pull to add")
+        tableView.refreshControl?.tintColor = .clear
+        tableView.refreshControl?.addTarget(self, action: #selector(add), for: .valueChanged)
         nameTextField.text = board?.id
+    }
+
+    @objc func add() {
+        tableView.refreshControl?.endRefreshing()
+        tableView.beginUpdates()
+        board?.items.insert(Board.Item(value: "New task"), at: 0)
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.insertRows(at: [indexPath], with: .automatic)
+        tableView.endUpdates()
+        let cell = tableView.cellForRow(at: indexPath) as! ItemTableViewCell
+        cell.textView.becomeFirstResponder()
+
     }
 }
 
 extension BoardCollectionViewCell: UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         board?.items.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "editCell", for: indexPath) as! ItemTableViewCell
         let item = board?.items[indexPath.row]
-        cell.textLabel?.text = item?.value
+        cell.item = item
+        cell.rootTableView = tableView
+        cell.setup()
         return cell
     }
 }
@@ -102,7 +124,7 @@ extension BoardCollectionViewCell:UITableViewDropDelegate {
     }
 
     func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-        return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
     }
 }
 

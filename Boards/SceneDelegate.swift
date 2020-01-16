@@ -13,10 +13,6 @@ enum RoutesFactory {
         static let main = UIStoryboard(name: "Main", bundle: nil)
     }
 
-    static var main: ViewController {
-        Storyboards.main.instantiateInitialViewController()!
-    }
-
     static var boards: BoardsCollectionViewController {
         Storyboards.main.instantiateViewController(withIdentifier: "boards") as! BoardsCollectionViewController
     }
@@ -43,13 +39,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
             if userActivity.title?.elementsEqual("NewProjectWithTask") ?? false {
                 let item = userActivity.userInfo?["Task"] as! String
-                boards.database = Project(boards: [Board(id: "New", items: [Board.Item(value: item)])])
+                boards.database = Project(name: "New project", boards: [Board(id: "New", items: [Board.Item(value: item)])])
             }
 
             
             if userActivity.title?.elementsEqual("NewProjectWithBoard") ?? false {
                let item = userActivity.userInfo?["Board"] as! String
-               boards.database = Project(boards: [Board.from(jsonString: item)!])
+               boards.database = Project(name: "New project", boards: [Board.from(jsonString: item)!])
             }
         }
         window?.rootViewController = boards

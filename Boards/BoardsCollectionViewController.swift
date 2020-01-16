@@ -9,16 +9,21 @@
 import UIKit
 
 class Project: Codable {
+    var name: String
     var boards: [Board]
 
-    init(boards: [Board]) {
+    init(name: String, boards: [Board]) {
+        self.name = name
         self.boards = boards
     }
 }
 
 class Board: Codable {
-    struct Item: Codable {
+    class Item: Codable {
         var value: String
+        init(value: String) {
+            self.value = value
+        }
     }
     var id: String
     var items: [Item]
@@ -45,26 +50,29 @@ extension Decodable {
 }
 
 
-class BoardsCollectionViewController: UICollectionViewController {
+class BoardsCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
 
-    var database = Project(boards: [
-        Board(id: "Cats", items: [
-            Board.Item(value: "Meowing")
+    @IBOutlet weak var projectNameTextField: UITextField!
+    @IBOutlet weak var collectionView: UICollectionView!
+
+
+    var database = Project(name: "Procastination", boards: [
+        Board(id: "TODO", items: [
+            Board.Item(value: "Do something productive ☹️")
         ]),
-        Board(id: "XDS", items: [
-            Board.Item(value: "XDDD"),
-            Board.Item(value: "XDDD2")
+        Board(id: "In progress", items: [
+            Board.Item(value: "Dring beer 🍺"),
+            Board.Item(value: "Eat something tasty 🍔")
         ]),
-        Board(id: "Brzydkie", items: [
-            Board.Item(value: "Dupa"),
-            Board.Item(value: "Gunwo"),
-            Board.Item(value: "kdfajskdfjlkasdjflkas djfkl;asdjf ;lkasdjflj fldsj f;lkdsjflkjasldk fjads;kjfas;lkdfj")
+        Board(id: "Done", items: [
+            Board.Item(value: "Buy beer 🍻"),
+            Board.Item(value: "Buy something to eat 😋"),
+            Board.Item(value: "Go to sleep 😴")
         ]),
-        Board(id: "Śmieszki", items: [
-            Board.Item(value: "Cheche"),
-            Board.Item(value: "hehue"),
-            Board.Item(value: "hehe"),
-            Board.Item(value: "haha")
+        Board(id: "Rejected", items: [
+            Board.Item(value: "Do some research about vege diet 👨🏼‍🔬🌿"),
+            Board.Item(value: "Go for a walk 🚶‍♀️"),
+            Board.Item(value: "Create some meme 🖼")
         ])
     ])
 
@@ -75,27 +83,35 @@ class BoardsCollectionViewController: UICollectionViewController {
         collectionView.dragInteractionEnabled = true
         collectionView.dragDelegate = self
         collectionView.dropDelegate = self
+        collectionView.dataSource = self
+        collectionView.delegate = self
 //        collectionView.reorderingCadence = .fast
 //        collectionView.addInteraction(UIDropInteraction(delegate: self))
         updateCollectionViewItem(with: view.bounds.size)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        projectNameTextField.text = database.name
+    }
+
 
     // MARK: UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
+    func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
 
 //    override func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
 //        true
 //    }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         database.boards.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! BoardCollectionViewCell
         cell.board = database.boards[indexPath.row]
+
         cell.setup()
         return cell
     }
@@ -109,7 +125,7 @@ class BoardsCollectionViewController: UICollectionViewController {
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {
             return
         }
-        layout.itemSize = CGSize(width: 225, height: size.height * 0.8)
+        layout.itemSize = CGSize(width: 225, height: size.height * 0.7)
     }
 
 }
@@ -120,7 +136,8 @@ extension BoardsCollectionViewController: UICollectionViewDragDelegate {
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         let itemProvider = NSItemProvider()
         let dragItem = UIDragItem(itemProvider: itemProvider)
-        let selectedItem = database.boards[indexPath.row]
+        let currentCell = collectionView.cellForItem(at: indexPath) as! BoardCollectionViewCell
+        let selectedItem = currentCell.board
         let userActivity = NSUserActivity(activityType: "com.ernichechelski.boards")
         userActivity.title = "NewProjectWithBoard"
         userActivity.userInfo = ["Board": selectedItem.asJSON!]
