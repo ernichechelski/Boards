@@ -48,16 +48,30 @@ extension BoardCollectionViewCell: UITableViewDataSource {
 
 extension BoardCollectionViewCell: UITableViewDragDelegate {
      func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-           let itemProvider = NSItemProvider()
-           let dragItem = UIDragItem(itemProvider: itemProvider)
-           session.localContext = (board?.items[indexPath.row],board,tableView,indexPath)
-           return [dragItem]
+
+        guard let selectedItem = board?.items[indexPath.row] else {
+            return []
+        }
+
+        let currentBoard = board
+
+        let userActivity = NSUserActivity(activityType: "com.ernichechelski.boards")
+        userActivity.title = "NewProjectWithTask"
+        userActivity.userInfo = ["Task": selectedItem.value]
+
+        let itemProvider = NSItemProvider()
+        itemProvider.registerObject(userActivity, visibility: .all)
+
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        session.localContext = (selectedItem,currentBoard,tableView,indexPath)
+        return [dragItem]
     }
 }
 
 extension BoardCollectionViewCell:UITableViewDropDelegate {
     func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
         guard let context = coordinator.session.localDragSession?.localContext as? (Board.Item, Board, UITableView, IndexPath) else {
+            
             return
         }
 

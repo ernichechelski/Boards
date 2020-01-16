@@ -34,8 +34,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
+
+
         window = UIWindow(windowScene: scene as! UIWindowScene)
-        window?.rootViewController = RoutesFactory.boards
+
+        let boards = RoutesFactory.boards
+
+        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
+            if userActivity.title?.elementsEqual("NewProjectWithTask") ?? false {
+                let item = userActivity.userInfo?["Task"] as! String
+                boards.database = Project(boards: [Board(id: "New", items: [Board.Item(value: item)])])
+            }
+
+            
+            if userActivity.title?.elementsEqual("NewProjectWithBoard") ?? false {
+               let item = userActivity.userInfo?["Board"] as! String
+               boards.database = Project(boards: [Board.from(jsonString: item)!])
+            }
+        }
+        window?.rootViewController = boards
         window?.makeKeyAndVisible()
     }
 
@@ -69,7 +86,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Save changes in the application's managed object context when the application transitions to the background.
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
-
-
 }
 
