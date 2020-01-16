@@ -16,6 +16,8 @@
 		A368BBA623CFADDF000D83B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A368BBA423CFADDF000D83B3 /* LaunchScreen.storyboard */; };
 		A368BBB123CFADDF000D83B3 /* BoardsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368BBB023CFADDF000D83B3 /* BoardsTests.swift */; };
 		A368BBBC23CFADDF000D83B3 /* BoardsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368BBBB23CFADDF000D83B3 /* BoardsUITests.swift */; };
+		A368BBCA23CFAF85000D83B3 /* BoardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368BBC923CFAF85000D83B3 /* BoardCollectionViewCell.swift */; };
+		A368BBCC23CFB0FA000D83B3 /* BoardsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A368BBCB23CFB0FA000D83B3 /* BoardsCollectionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,8 @@
 		A368BBB723CFADDF000D83B3 /* BoardsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BoardsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A368BBBB23CFADDF000D83B3 /* BoardsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsUITests.swift; sourceTree = "<group>"; };
 		A368BBBD23CFADDF000D83B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A368BBC923CFAF85000D83B3 /* BoardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCollectionViewCell.swift; sourceTree = "<group>"; };
+		A368BBCB23CFB0FA000D83B3 /* BoardsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsCollectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,8 @@
 				A368BBA423CFADDF000D83B3 /* LaunchScreen.storyboard */,
 				A368BBA723CFADDF000D83B3 /* Info.plist */,
 				A368BB9F23CFADDE000D83B3 /* Boards.xcdatamodeld */,
+				A368BBC923CFAF85000D83B3 /* BoardCollectionViewCell.swift */,
+				A368BBCB23CFB0FA000D83B3 /* BoardsCollectionViewController.swift */,
 			);
 			path = Boards;
 			sourceTree = "<group>";
@@ -264,8 +270,10 @@
 			files = (
 				A368BB9B23CFADDE000D83B3 /* ViewController.swift in Sources */,
 				A368BB9723CFADDE000D83B3 /* AppDelegate.swift in Sources */,
+				A368BBCA23CFAF85000D83B3 /* BoardCollectionViewCell.swift in Sources */,
 				A368BBA123CFADDE000D83B3 /* Boards.xcdatamodeld in Sources */,
 				A368BB9923CFADDE000D83B3 /* SceneDelegate.swift in Sources */,
+				A368BBCC23CFB0FA000D83B3 /* BoardsCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
