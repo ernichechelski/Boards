@@ -10,8 +10,8 @@ import UIKit
 
 class ItemTableViewCell: UITableViewCell, UITextViewDelegate {
 
-
     weak var rootTableView: UITableView?
+
     var item: Board.Item?
 
     @IBOutlet weak var textView: UITextView!

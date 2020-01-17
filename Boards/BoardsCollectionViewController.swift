@@ -16,6 +16,21 @@ class Project: Codable {
         self.name = name
         self.boards = boards
     }
+
+    init(board: Board?) {
+        name = "New Project"
+        if let board = board {
+            boards = [board]
+        } else {
+            boards = []
+        }
+
+    }
+
+    init(item: Board.Item?) {
+        name = "New Project"
+        boards = [Board(item: item)]
+    }
 }
 
 class Board: Codable {
@@ -31,6 +46,15 @@ class Board: Codable {
     init(id: String, items: [Item]) {
         self.id = id
         self.items = items
+    }
+
+    init(item: Item?) {
+        id = "New board"
+        if let item = item {
+            items = [item]
+        } else {
+            items = []
+        }
     }
 }
 
@@ -76,8 +100,6 @@ class BoardsCollectionViewController: UIViewController, UICollectionViewDataSour
         ])
     ])
 
-    private let reuseIdentifier = "Cell"
-
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.dragInteractionEnabled = true
@@ -85,8 +107,6 @@ class BoardsCollectionViewController: UIViewController, UICollectionViewDataSour
         collectionView.dropDelegate = self
         collectionView.dataSource = self
         collectionView.delegate = self
-//        collectionView.reorderingCadence = .fast
-//        collectionView.addInteraction(UIDropInteraction(delegate: self))
         updateCollectionViewItem(with: view.bounds.size)
     }
 
@@ -100,20 +120,13 @@ class BoardsCollectionViewController: UIViewController, UICollectionViewDataSour
 
     func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
 
-//    override func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
-//        true
-//    }
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         database.boards.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! BoardCollectionViewCell
-        cell.board = database.boards[indexPath.row]
-
-        cell.setup()
-        return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! BoardCollectionViewCell
+        return cell.setup(with: database.boards[indexPath.row])
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -134,18 +147,34 @@ extension BoardsCollectionViewController: UICollectionViewDelegateFlowLayout { }
 
 extension BoardsCollectionViewController: UICollectionViewDragDelegate {
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let itemProvider = NSItemProvider()
-        let dragItem = UIDragItem(itemProvider: itemProvider)
         let currentCell = collectionView.cellForItem(at: indexPath) as! BoardCollectionViewCell
-        let selectedItem = currentCell.board
-        let userActivity = NSUserActivity(activityType: "com.ernichechelski.boards")
-        userActivity.title = "NewProjectWithBoard"
-        userActivity.userInfo = ["Board": selectedItem.asJSON!]
-        itemProvider.registerObject(userActivity, visibility: .all)
+        let selectedItem = currentCell.board!
         session.localContext = (selectedItem,database,collectionView,indexPath)
-        return [dragItem]
+        return [selectedItem.dragItem]
     }
 }
+
+extension Board: ModelDraggable {
+
+    static let activityType = "com.ernichechelski.boards"
+    static let taskNewProject = "NewProjectWithBoard"
+
+    var dragItem: UIDragItem {
+        let itemProvider = NSItemProvider()
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        let userActivity = NSUserActivity(activityType: Board.activityType)
+        userActivity.title = Board.taskNewProject
+        userActivity.userInfo = ["Board": self.asJSON!]
+        itemProvider.registerObject(userActivity, visibility: .all)
+        return dragItem
+    }
+
+    static func create(from activity: NSUserActivity) -> Self? {
+        let json = activity.userInfo?["Board"] as! String
+        return Board.from(jsonString: json) as? Self
+    }
+}
+
 
 extension BoardsCollectionViewController: UICollectionViewDropDelegate {
 
