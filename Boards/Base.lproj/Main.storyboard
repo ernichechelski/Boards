@@ -11,27 +11,27 @@
         <!--Boards Collection View Controller-->
         <scene sceneID="xWD-g8-Zi1">
             <objects>
-                <viewController storyboardIdentifier="boards" id="9Ul-Cd-DsL" customClass="BoardsCollectionViewController" customModule="Boards" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="boards" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9Ul-Cd-DsL" customClass="BoardsCollectionViewController" customModule="Boards" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OOq-Be-a4f">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="gsi-5B-PWZ">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="918"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KN6-Qc-Ekp">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="53"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="68"/>
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Project name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="744-7g-RM3">
-                                                <rect key="frame" x="35" y="0.0" width="344" height="53"/>
+                                                <rect key="frame" x="35" y="15" width="344" height="53"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="43"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                         </subviews>
-                                        <edgeInsets key="layoutMargins" top="0.0" left="35" bottom="0.0" right="35"/>
+                                        <edgeInsets key="layoutMargins" top="15" left="35" bottom="0.0" right="35"/>
                                     </stackView>
-                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="heD-7r-yZJ">
-                                        <rect key="frame" x="0.0" y="53" width="414" height="765"/>
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="onDrag" dataMode="prototypes" id="heD-7r-yZJ">
+                                        <rect key="frame" x="0.0" y="68" width="414" height="764"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="5" minimumInteritemSpacing="30" id="iIS-xN-wOv">
@@ -42,7 +42,7 @@
                                         </collectionViewFlowLayout>
                                         <cells>
                                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="D3c-Fe-p7U" customClass="BoardCollectionViewCell" customModule="Boards" customModuleProvider="target">
-                                                <rect key="frame" x="40" y="82.5" width="250" height="600"/>
+                                                <rect key="frame" x="40" y="82" width="250" height="600"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Ax0-tg-49M">
                                                     <rect key="frame" x="0.0" y="0.0" width="250" height="600"/>
@@ -125,15 +125,59 @@
                                                     <outlet property="tableView" destination="WZh-uN-v7n" id="ZHT-Cl-ZdB"/>
                                                 </connections>
                                             </collectionViewCell>
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="addCell" id="YEC-D9-fjZ" customClass="NewBoardCollectionViewCell" customModule="Boards" customModuleProvider="target">
+                                                <rect key="frame" x="295" y="82" width="250" height="600"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Ggm-YD-Rem">
+                                                    <rect key="frame" x="0.0" y="0.0" width="250" height="600"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uXT-uh-bOo">
+                                                            <rect key="frame" x="0.0" y="0.0" width="250" height="600"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                                            <state key="normal" title="New board"/>
+                                                            <connections>
+                                                                <action selector="newBoardButtonTapped:" destination="YEC-D9-fjZ" eventType="touchUpInside" id="CRm-32-xwn"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="trailing" secondItem="uXT-uh-bOo" secondAttribute="trailing" id="9EG-2L-Rc2"/>
+                                                        <constraint firstItem="uXT-uh-bOo" firstAttribute="leading" secondItem="Ggm-YD-Rem" secondAttribute="leading" id="ahL-HP-TXV"/>
+                                                        <constraint firstAttribute="bottom" secondItem="uXT-uh-bOo" secondAttribute="bottom" id="dvs-wA-C2L"/>
+                                                        <constraint firstItem="uXT-uh-bOo" firstAttribute="top" secondItem="Ggm-YD-Rem" secondAttribute="top" id="jK9-Uy-XDM"/>
+                                                    </constraints>
+                                                </collectionViewCellContentView>
+                                            </collectionViewCell>
                                         </cells>
                                     </collectionView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="kkJ-vo-hjt">
+                                        <rect key="frame" x="0.0" y="832" width="414" height="86"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u7L-9q-6DU" customClass="RemoveButton" customModule="Boards" customModuleProvider="target">
+                                                <rect key="frame" x="20" y="8" width="187" height="24"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <state key="normal" image="trash" catalog="system"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b7N-5H-CvW">
+                                                <rect key="frame" x="207" y="8" width="187" height="24"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <state key="normal" image="plus.circle" catalog="system"/>
+                                            </button>
+                                        </subviews>
+                                        <edgeInsets key="layoutMargins" top="8" left="20" bottom="20" right="20"/>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="gsi-5B-PWZ" firstAttribute="top" secondItem="RzM-iH-5X4" secondAttribute="top" id="S3C-AO-PRQ"/>
-                            <constraint firstItem="RzM-iH-5X4" firstAttribute="bottom" secondItem="gsi-5B-PWZ" secondAttribute="bottom" id="fRm-gH-8or"/>
+                            <constraint firstItem="RzM-iH-5X4" firstAttribute="bottom" secondItem="gsi-5B-PWZ" secondAttribute="bottom" constant="10" id="fRm-gH-8or"/>
                             <constraint firstItem="gsi-5B-PWZ" firstAttribute="leading" secondItem="RzM-iH-5X4" secondAttribute="leading" id="gKA-zl-gsD"/>
                             <constraint firstItem="RzM-iH-5X4" firstAttribute="trailing" secondItem="gsi-5B-PWZ" secondAttribute="trailing" id="ruS-BI-1ef"/>
                         </constraints>
@@ -147,7 +191,67 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H95-gj-Xi6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1492.753623188406" y="39.508928571428569"/>
+            <point key="canvasLocation" x="4168" y="40"/>
+        </scene>
+        <!--Projects-->
+        <scene sceneID="urm-Tu-Iuz">
+            <objects>
+                <tableViewController title="Projects" id="TVE-sy-i9i" customClass="ProjectsTableViewController" customModule="Boards" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="uTM-cl-JLH">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" textLabel="nRk-kt-r0B" style="IBUITableViewCellStyleDefault" id="U8d-wr-JB1">
+                                <rect key="frame" x="0.0" y="28" width="414" height="71.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="U8d-wr-JB1" id="qUk-an-LJx">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="71.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nRk-kt-r0B">
+                                            <rect key="frame" x="20" y="0.0" width="374" height="71.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="TVE-sy-i9i" id="HzS-It-UDL"/>
+                            <outlet property="delegate" destination="TVE-sy-i9i" id="SxV-Eg-R16"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Projects" largeTitleDisplayMode="always" id="tRD-eF-FUS"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vdi-na-ByR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3077" y="40"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="khy-PL-Icc">
+            <objects>
+                <navigationController storyboardIdentifier="projects" automaticallyAdjustsScrollViewInsets="NO" id="rqR-qB-SWw" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="YKQ-bP-puS">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="TVE-sy-i9i" kind="relationship" relationship="rootViewController" id="fCX-C0-dLU"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cq8-Lw-tvn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2286.9565217391305" y="39.508928571428569"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="plus.circle" catalog="system" width="64" height="60"/>
+        <image name="trash" catalog="system" width="60" height="64"/>
+    </resources>
 </document>

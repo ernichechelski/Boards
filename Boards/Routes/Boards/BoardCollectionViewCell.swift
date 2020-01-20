@@ -11,7 +11,8 @@ import UIKit
 class BoardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var nameTextField: UITextField!
-    var board: Board?
+    weak var rootProject: Project?
+    weak var board: Board?
 }
 
 extension BoardCollectionViewCell: UITextFieldDelegate {
@@ -28,6 +29,7 @@ extension BoardCollectionViewCell: UITextFieldDelegate {
         layer.borderWidth = 1
         layer.borderColor = UIColor.lightGray.cgColor
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.dragDelegate = self
         tableView.dropDelegate = self
         tableView.dragInteractionEnabled = true
@@ -38,12 +40,24 @@ extension BoardCollectionViewCell: UITextFieldDelegate {
         tableView.refreshControl?.addTarget(self, action: #selector(add), for: .valueChanged)
         tableView.reloadData()
         nameTextField.delegate = self
-        nameTextField.text = board?.id
+        nameTextField.text = board?.name
+        UpdateEvent.observe(self, selector: #selector(update))
         return self
     }
 
+    @objc func update(notification: Notification) {
+        let event = notification.object as! UpdateEvent
+        switch event {
+            case .reload: tableView.reloadData()
+            case .project: break
+            case .board: tableView.reloadData()
+            case .item: tableView.reloadData()
+        }
+    }
+
     func textFieldDidEndEditing(_ textField: UITextField)  {
-        board?.id = textField.text ?? ""
+        board?.name = textField.text ?? ""
+        UpdateEvent.board(rootProject: rootProject, board: board).post()
     }
 
     @objc func add() {
@@ -51,6 +65,7 @@ extension BoardCollectionViewCell: UITextFieldDelegate {
 
         tableView.beginUpdates()
         board?.items.insert(Board.Item(value: "New task"), at: 0)
+        UpdateEvent.board(rootProject: rootProject, board: board).post()
 
         let indexPath = IndexPath(row: 0, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
@@ -72,8 +87,24 @@ extension BoardCollectionViewCell: UITableViewDataSource {
         let item = board?.items[indexPath.row]
         cell.item = item
         cell.rootTableView = tableView
+        cell.rootProject = rootProject
         cell.setup()
         return cell
+    }
+}
+
+// Not accessible when everything is in scrollable collectionview
+extension BoardCollectionViewCell: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        .init(actions: [
+            .init(style: .destructive, title: "Delete", handler: { [weak self] (action, view, completion) in
+                self?.tableView.beginUpdates()
+                self?.board?.items.remove(at: indexPath.row)
+                UpdateEvent.board(rootProject: self?.rootProject, board: self?.board).post()
+                self?.tableView.deleteRows(at: [indexPath], with: .automatic)
+                self?.tableView.endUpdates()
+            })
+        ])
     }
 }
 
@@ -83,54 +114,9 @@ extension BoardCollectionViewCell: UITableViewDragDelegate {
         session.setTableViewCellContext(sourceItem: selectedItem, sourceBoard: board!, sourceTableView: tableView, sourceIndexPath: indexPath)
         return [selectedItem.dragItem]
     }
-
-
 }
 
-extension UIDragSession {
-    func setTableViewCellContext(sourceItem: Board.Item, sourceBoard: Board, sourceTableView: UITableView, sourceIndexPath: IndexPath) {
-        localContext = (sourceItem,sourceBoard,sourceTableView,sourceIndexPath)
-    }
-
-    func getTableViewCellContext() -> (sourceItem: Board.Item, sourceBoard: Board, sourceTableView: UITableView, sourceIndexPath: IndexPath)?  {
-        localContext as? (Board.Item, Board, UITableView, IndexPath)
-    }
-}
-
-protocol ModelDraggable {
-    static var activityType: String { get }
-    static var taskNewProject: String { get }
-    var dragItem: UIDragItem { get }
-    static func create(from: NSUserActivity) -> Self?
-}
-
-extension Board.Item: ModelDraggable {
-
-    static let activityType = "com.ernichechelski.boards"
-    static let taskNewProject = "NewProjectWithTask"
-
-    var itemProvider: NSItemProvider {
-        let userActivity = NSUserActivity(activityType: Board.Item.activityType)
-        userActivity.title = Board.Item.taskNewProject
-        if let json = self.asJSON {
-            userActivity.userInfo = ["Task": json]
-        }
-        let itemProvider = NSItemProvider()
-        itemProvider.registerObject(userActivity, visibility: .all)
-        return itemProvider
-    }
-
-    var dragItem: UIDragItem {
-        UIDragItem(itemProvider: self.itemProvider)
-    }
-
-    static func create(from activity: NSUserActivity) -> Self? {
-        let json = activity.userInfo?["Task"] as! String
-        return Board.Item.from(jsonString: json) as? Self
-    }
-}
-
-extension BoardCollectionViewCell:UITableViewDropDelegate {
+extension BoardCollectionViewCell: UITableViewDropDelegate {
 
     func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
         guard let context = coordinator.session.localDragSession?.getTableViewCellContext() else { return }
@@ -154,6 +140,7 @@ extension BoardCollectionViewCell:UITableViewDropDelegate {
             destinationBoard.items.insert(item, at: destinationIndexPath.row)
             destinationTableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
         case false:
+            guard !destinationBoard.id.elementsEqual(sourceBoard.id) else { break }
             destinationBoard.items.insert(sourceItem, at: destinationIndexPath.row)
             destinationTableView.insertRows(at: [destinationIndexPath], with: .automatic)
             sourceBoard.items.remove(at: sourceIndexPath.row)
@@ -163,9 +150,9 @@ extension BoardCollectionViewCell:UITableViewDropDelegate {
         destinationTableView.endUpdates()
         sourceTableView.endUpdates()
     }
-
+    
     func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-        UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        .init(operation: .move, intent: .insertAtDestinationIndexPath)
     }
 }
 

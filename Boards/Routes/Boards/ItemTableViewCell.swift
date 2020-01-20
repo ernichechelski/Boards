@@ -12,6 +12,10 @@ class ItemTableViewCell: UITableViewCell, UITextViewDelegate {
 
     weak var rootTableView: UITableView?
 
+    weak var rootProject: Project?
+
+    weak var rootBoard: Board?
+
     var item: Board.Item?
 
     @IBOutlet weak var textView: UITextView!
@@ -27,6 +31,7 @@ class ItemTableViewCell: UITableViewCell, UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         item?.value = textView.text
+        UpdateEvent.item(rootProject: rootProject, board: rootBoard, item: item).post()
     }
 
     func textViewDidChange(_ textView: UITextView) {

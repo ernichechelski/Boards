@@ -8,50 +8,69 @@
 
 import UIKit
 
-enum RoutesFactory {
-    enum Storyboards {
-        static let main = UIStoryboard(name: "Main", bundle: nil)
-    }
-
-    static var boards: BoardsCollectionViewController {
-        Storyboards.main.instantiateViewController(withIdentifier: "boards") as! BoardsCollectionViewController
-    }
-}
-
-
-
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         window = UIWindow(windowScene: scene as! UIWindowScene)
 
-        let boards = RoutesFactory.boards
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
             switch userActivity.title {
-            case Board.activityType:
-                boards.database = Project(board: .create(from: userActivity))
-            case Board.Item.activityType:
-                boards.database = Project(item: .create(from: userActivity))
+            case Board.taskType:
+                let boards = RoutesFactory.boards
+                let newProject = Project(board: .create(from: userActivity))
+                PersistanceManager.sharedInstance.database.projects.append(newProject)
+                UpdateEvent.reload.post()
+                boards.project = newProject
+                window?.rootViewController = boards
+            case Board.Item.taskType:
+                let boards = RoutesFactory.boards
+                let newProject = Project(board: .create(from: userActivity))
+                PersistanceManager.sharedInstance.database.projects.append(newProject)
+                UpdateEvent.reload.post()
+                boards.project = newProject
+                window?.rootViewController = boards
+            case Project.taskType:
+                let boards = RoutesFactory.boards
+                let newProject = Project.create(from: userActivity) ?? Project()
+                PersistanceManager.sharedInstance.database.projects.append(newProject)
+                UpdateEvent.reload.post()
+                boards.project = newProject
+                window?.rootViewController = boards
             default:
+                window?.rootViewController = RoutesFactory.projectsRoot
                 break
             }
+        } else {
+             window?.rootViewController = RoutesFactory.projectsRoot
         }
-        window?.rootViewController = boards
         window?.makeKeyAndVisible()
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {}
+    func sceneDidDisconnect(_ scene: UIScene) { }
 
-    func sceneDidBecomeActive(_ scene: UIScene) {}
+    func sceneDidBecomeActive(_ scene: UIScene) { }
 
-    func sceneWillResignActive(_ scene: UIScene) {}
+    func sceneWillResignActive(_ scene: UIScene) { }
 
-    func sceneWillEnterForeground(_ scene: UIScene) {}
+    func sceneWillEnterForeground(_ scene: UIScene) { }
 
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+    func sceneDidEnterBackground(_ scene: UIScene) { }
+
+    func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? { .restoration }
+}
+
+extension UIWindow {
+
+    var visibleViewController: UIViewController? {
+        (rootViewController as? UINavigationController)?.visibleViewController ?? rootViewController
+    }
+
+    var boards: BoardsCollectionViewController? {
+        visibleViewController as? BoardsCollectionViewController
     }
 }
+
+
 
