@@ -36,9 +36,13 @@ enum UpdateEvent {
 
     static let name = Notification.Name("UpdateEvent")
 
+    // When some data property is updated and CRUD operations for projects
     case reload
+    // When some project property is updated and CRUD operations for boards
     case project(rootProject: Project? = nil)
+    // When some board property is updated and CRUD operations for items
     case board(rootProject: Project? = nil, board: Board? = nil)
+    // When some item property is updated
     case item(rootProject: Project? = nil, board: Board? = nil, item: Board.Item? = nil)
 
     func post() {

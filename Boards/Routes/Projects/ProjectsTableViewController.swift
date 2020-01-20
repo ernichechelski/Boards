@@ -30,9 +30,9 @@ class ProjectsTableViewController: UITableViewController {
         let event = notification.object as! UpdateEvent
         switch event {
         case .reload: tableView.reloadData()
-        case .board: tableView.reloadData()
-        case .project: tableView.reloadData()
-        case .item: tableView.reloadData()
+        case .board: break
+        case .project: break
+        case .item: break
         }
     }
 
@@ -95,6 +95,7 @@ class ProjectsTableViewController: UITableViewController {
             .init(style: .destructive, title: "Delete", handler: { [weak self] (action, view, completion) in
                 self?.tableView.beginUpdates()
                 self?.database.projects.remove(at: indexPath.row)
+                UpdateEvent.reload.post()
                 self?.tableView.deleteRows(at: [indexPath], with: .automatic)
                 self?.tableView.endUpdates()
             })

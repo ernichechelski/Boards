@@ -24,6 +24,7 @@ final class RemoveButton: UIButton, UIDropInteractionDelegate {
 
             sourceTableView.beginUpdates()
             sourceBoard.items.remove(at: sourceIndexPath.row)
+            UpdateEvent.board(board: sourceBoard).post()
             sourceTableView.deleteRows(at: [sourceIndexPath], with: .automatic)
             sourceTableView.endUpdates()
         }
@@ -31,6 +32,7 @@ final class RemoveButton: UIButton, UIDropInteractionDelegate {
         if let context = session.localDragSession?.localContext as? (Board, Project, UICollectionView, IndexPath) {
             guard context.3.row != context.1.boards.count else { return }
             context.1.boards.remove(at: context.3.row)
+            UpdateEvent.project(rootProject: context.1).post()
             context.2.deleteItems(at: [context.3])
         }
     }

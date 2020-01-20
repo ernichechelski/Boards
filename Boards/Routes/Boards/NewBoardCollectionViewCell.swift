@@ -18,7 +18,7 @@ class NewBoardCollectionViewCell: UICollectionViewCell {
         let board = Board(item: Board.Item(value: "New item"))
         rootProject.boards.append(board)
 
-        UpdateEvent.board(rootProject: rootProject, board: board).post()
+        UpdateEvent.project(rootProject: rootProject).post()
 
         self.rootCollectionView?.reloadData()
         let indexPath = IndexPath(row: (self.rootCollectionView?.dataSource?.collectionView(self.rootCollectionView!, numberOfItemsInSection: 0))! - 1, section: 0)

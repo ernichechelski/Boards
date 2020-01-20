@@ -49,7 +49,7 @@ extension BoardCollectionViewCell: UITextFieldDelegate {
         let event = notification.object as! UpdateEvent
         switch event {
             case .reload: tableView.reloadData()
-            case .project: break
+            case .project: tableView.reloadData()
             case .board: tableView.reloadData()
             case .item: tableView.reloadData()
         }
