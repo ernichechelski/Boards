@@ -29,6 +29,7 @@ final class RemoveButton: UIButton, UIDropInteractionDelegate {
             sourceTableView.endUpdates()
         }
 
+        /// TODO: Clean this mess.
         if let context = session.localDragSession?.localContext as? (Board, Project, UICollectionView, IndexPath) {
             guard context.3.row != context.1.boards.count else { return }
             context.1.boards.remove(at: context.3.row)

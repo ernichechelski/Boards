@@ -153,6 +153,7 @@ extension BoardCollectionViewCell: UITableViewDropDelegate {
 
         destinationTableView.endUpdates()
         sourceTableView.endUpdates()
+        UpdateEvent.board(rootProject: rootProject).post()
     }
     
     func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
