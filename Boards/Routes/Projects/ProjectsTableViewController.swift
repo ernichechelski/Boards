@@ -31,7 +31,7 @@ class ProjectsTableViewController: UITableViewController {
         switch event {
         case .reload: tableView.reloadData()
         case .board: break
-        case .project: break
+        case .project: tableView.reloadData()
         case .item: break
         }
     }

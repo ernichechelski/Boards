@@ -99,7 +99,7 @@ extension BoardsCollectionViewController: UICollectionViewDragDelegate {
 extension BoardsCollectionViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         project.name = textField.text!
-        UpdateEvent.project(rootProject: project).post()
+        UpdateEvent.project(project: project).post()
     }
 }
 

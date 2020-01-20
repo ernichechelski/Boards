@@ -27,11 +27,22 @@ class ItemTableViewCell: UITableViewCell, UITextViewDelegate {
 
     func setup() {
         textView.text = item?.value
+        UpdateEvent.observe(self, selector: #selector(update))
     }
+
+   @objc func update(notification: Notification) {
+       let event = notification.object as! UpdateEvent
+       switch event {
+           case .reload: break
+           case .project: break
+           case .board: break
+           case .item: textView.text = item?.value
+       }
+   }
 
     func textViewDidEndEditing(_ textView: UITextView) {
         item?.value = textView.text
-        UpdateEvent.item(rootProject: rootProject, board: rootBoard, item: item).post()
+        UpdateEvent.item(rootProject: rootProject, rootBoard: rootBoard, item: item).post()
     }
 
     func textViewDidChange(_ textView: UITextView) {

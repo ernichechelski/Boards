@@ -48,8 +48,12 @@ extension BoardCollectionViewCell: UITextFieldDelegate {
     @objc func update(notification: Notification) {
         let event = notification.object as! UpdateEvent
         switch event {
-            case .reload: tableView.reloadData()
-            case .project: tableView.reloadData()
+            case .reload:
+                tableView.reloadData()
+                nameTextField.text = board?.name
+            case .project:
+                nameTextField.text = board?.name
+                tableView.reloadData()
             case .board: tableView.reloadData()
             case .item: tableView.reloadData()
         }

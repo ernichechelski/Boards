@@ -24,7 +24,7 @@ final class Project: Codable {
 
     var boards: [Board]
 
-    let id = UUID().uuidString
+    var id = UUID().uuidString
 
     init(name: String, boards: [Board]) {
         self.name = name

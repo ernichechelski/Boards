@@ -26,15 +26,23 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 window?.rootViewController = boards
             case Board.Item.taskType:
                 let boards = RoutesFactory.boards
-                let newProject = Project(board: .create(from: userActivity))
+                let newProject = Project(item: .create(from: userActivity))
                 PersistanceManager.sharedInstance.database.projects.append(newProject)
                 UpdateEvent.reload.post()
                 boards.project = newProject
                 window?.rootViewController = boards
             case Project.taskType:
                 let boards = RoutesFactory.boards
-                let newProject = Project.create(from: userActivity) ?? Project()
-                PersistanceManager.sharedInstance.database.projects.append(newProject)
+                var newProject = Project.create(from: userActivity) ?? Project()
+
+                let duplicate = PersistanceManager.sharedInstance.database.projects.first {
+                    $0.id.elementsEqual(newProject.id)
+                }
+                if duplicate == nil {
+                    PersistanceManager.sharedInstance.database.projects.append(newProject)
+                } else {
+                    newProject = duplicate ?? newProject
+                }
                 UpdateEvent.reload.post()
                 boards.project = newProject
                 window?.rootViewController = boards
